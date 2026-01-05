@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="intestazione">
+            <div class="title">
+                BOBO BINGO 2026
+            </div>
+            <div class="sottotitolo">
+                I miei obiettivi per il 2026
+            </div>
+
+        </div>
+        <div class="spiegazione">
+            Questa è una scheda bingo personale con 25 obiettivi che voglio raggiungere nel 2026. Clicca sulle celle per
+            marcarle quando completate!
+        </div>
+        <div class="controls">
+            <button id="saveBtn">Save</button>
+            <button id="loadBtn">Load</button>
+        </div>
+        <div class="table">
+        </div>
+    </div>
+    <script>
+        const obiettivi = [
+            "1. Giocare 50 partite",
+            "2. Comprare 20 manga",
+            "3. Scrivere una canzone",
+            "4. 1000 foto",
+            "5. Viaggio",
+            "6. Arrivare a 100 giochi in scatola",
+            "7. Leggere tutti i manga in libreria",
+            "8. 30 giorni di studio consecutivo di Sax (filmati)",
+            "9. Scrivere e registrare un corto",
+            "10. Visitare [luogo]",
+            "11. Guardare Star Wars (tutti)",
+            "12. Creare uno spartito",
+            "13. FREE",
+            "14. Progetto DALIA",
+            "15. Partecipare a una fiera",
+            "16. Guadagnare 12 Platini",
+            "17. Creare un fumetto",
+            "18. Blender – modellare personaggi",
+            "19. Stampante 3D",
+            "20. Progetto di robotica",
+            "21. Giocare tutta la serie di giochi Pokémon ufficiali",
+            "22. Scrivere l'accademia per un'avventura D&D",
+            "23. Inventare e creare un gioco da tavolo / videogioco",
+            "24. Magistrale e Doc",
+            "25. M"
+        ];
+
+        document.querySelectorAll('.cell').forEach((cell, index) => {
+            cell.textContent = obiettivi[index];
+            cell.addEventListener('click', () => {
+                cell.classList.toggle('checked');
+            });
+        });
+
+        const table = document.querySelector('.table');
+        let checkedCells = JSON.parse(localStorage.getItem('bingoChecked') || '[]');
+
+        // Carica da progresso.json se esiste
+        fetch('progresso.json')
+            .then(response => response.json())
+            .then(data => {
+                checkedCells = data.checked;
+                localStorage.setItem('bingoChecked', JSON.stringify(checkedCells));
+            })
+            .catch(() => {
+                // Usa localStorage esistente
+            })
+            .finally(() => {
+                obiettivi.forEach((obbiettivo, index) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    const parts = obbiettivo.split('. ');
+                    const numero = parts[0] + '.';
+                    const testo = parts.slice(1).join('. ');
+                    cell.innerHTML = `<div class="numero">${numero}</div><div class="obbiettivo">${testo}</div>`;
+                    if (checkedCells.includes(index)) {
+                        cell.classList.add('checked');
+                    }
+                    cell.addEventListener('click', () => {
+                        cell.classList.toggle('checked');
+                        const isChecked = cell.classList.contains('checked');
+                        if (isChecked) {
+                            if (!checkedCells.includes(index)) {
+                                checkedCells.push(index);
+                            }
+                        } else {
+                            const idx = checkedCells.indexOf(index);
+                            if (idx > -1) {
+                                checkedCells.splice(idx, 1);
+                            }
+                        }
+                        localStorage.setItem('bingoChecked', JSON.stringify(checkedCells));
+                    });
+                    table.appendChild(cell);
+                });
+            });
+
+        // Funzioni per save/load
+        const saveBtn = document.getElementById('saveBtn');
+        const loadBtn = document.getElementById('loadBtn');
+        const loadInput = document.createElement('input');
+        loadInput.type = 'file';
+        loadInput.accept = '.json';
+        loadInput.style.display = 'none';
+        document.body.appendChild(loadInput);
+
+        saveBtn.addEventListener('click', () => {
+            const data = { checked: checkedCells, date: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'progresso.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('File progresso.json scaricato. Salvalo nella cartella di index.html per caricarlo automaticamente.');
+        });
+
+        loadBtn.addEventListener('click', () => {
+            loadInput.click();
+        });
+
+        loadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        checkedCells = data.checked;
+                        localStorage.setItem('bingoChecked', JSON.stringify(checkedCells));
+                        // Aggiorna le classi
+                        document.querySelectorAll('.cell').forEach((cell, index) => {
+                            if (checkedCells.includes(index)) {
+                                cell.classList.add('checked');
+                            } else {
+                                cell.classList.remove('checked');
+                            }
+                        });
+                        alert('Progresso caricato!');
+                    } catch (err) {
+                        alert('Errore nel caricamento del file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+    </script>
+</body>

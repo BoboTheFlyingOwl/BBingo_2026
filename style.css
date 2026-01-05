@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-image: url('sfondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    /*background-color: rgba(138, 43, 226, 0.8);
+    /* semi-transparent per vedere sfondo */
+}
+
+.intestazione {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.sottotitolo {
+    font-size: 24px;
+    color: white;
+    margin-top: 10px;
+}
+
+.spiegazione {
+    font-size: 18px;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 600px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.controls button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.controls button:hover {
+    background: #f0f0f0;
+}
+
+.table {
+    display: grid;
+    grid-template-columns: repeat(5, 150px);
+    grid-template-rows: repeat(5, 150px);
+    gap: 5px;
+}
+
+.cell {
+    background: white;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.numero {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.obbiettivo {
+    font-size: 14px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.cell.checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: red;
+    transform: rotate(45deg);
+    transform-origin: center;
+    z-index: 1;
+}
+
+.cell.checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: red;
+    transform: rotate(-45deg);
+    transform-origin: center;
+    z-index: 1;
+}
